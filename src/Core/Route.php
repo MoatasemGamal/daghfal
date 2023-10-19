@@ -45,6 +45,10 @@ class Route
         }
         if (is_array($action)) {
             $action[0] = "\\" . $action[0];
+            //make current action from current controller accessed by middleware
+            App::$singleton->controller = new $action[0];
+            App::$singleton->controller->action = $action[1];
+
             if (!empty($params))
                 return call_user_func([new $action[0], $action[1]], $params);
             return call_user_func([new $action[0], $action[1]]);

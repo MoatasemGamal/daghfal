@@ -2,10 +2,14 @@
 
 namespace Core;
 
+use Core\Bases\BaseController;
+use Core\Utility\Session;
+
 class App
 {
     public static ?App $singleton = null;
     private array $configurations;
+    public BaseController $controller;
     private function __construct($configurations)
     {
         $this->configurations = $configurations;
@@ -29,7 +33,11 @@ class App
             require_once $routeFile;
         }
     }
-
+    public static function isGuest(): bool
+    {
+        Session::start();
+        return !isset($_SESSION["user"]);
+    }
     public function run(): void
     {
         $this->loadRoutes();
