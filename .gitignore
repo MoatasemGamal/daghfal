@@ -1,3 +1,4 @@
 nbproject/
 .vscode/
 config.php
+vendor
