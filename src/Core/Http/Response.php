@@ -18,7 +18,7 @@ class Response
     public static function backward(float $delay = 0, int $response_code = 301): void
     {
         http_response_code($response_code);
-        $path = $_SERVER['HTTP_REFERER'];
+        $path = ($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "/";
         if (!$delay) {
             header("Location: $path");
         } else {
