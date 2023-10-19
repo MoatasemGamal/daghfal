@@ -14,11 +14,10 @@
  */
 // define("SRC_PATH", ROOT_PATH . "src/");
 
-// define('CORE_PATH', SRC_PATH . 'core/');
-// define('APP_PATH', SRC_PATH . 'app/');
+// define('CORE_PATH', SRC_PATH . 'Core/');
+// define('APP_PATH', SRC_PATH . 'App/');
 // define('LANGUAGES_PATH', SRC_PATH . 'languages/');
 // define('VIEWS_PATH', APP_PATH . 'views/');
-// define('PARTIALS_PATH', APP_PATH . 'partials/');
 
 
 /**
