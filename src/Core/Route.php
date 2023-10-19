@@ -43,7 +43,12 @@ class Route
         if (is_string($action)) {
             return view($action);
         }
-
+        if (is_array($action)) {
+            $action[0] = "\\" . $action[0];
+            if (!empty($params))
+                return call_user_func([new $action[0], $action[1]], $params);
+            return call_user_func([new $action[0], $action[1]]);
+        }
         return call_user_func($action);
     }
 
