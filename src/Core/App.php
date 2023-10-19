@@ -2,7 +2,6 @@
 
 namespace Core;
 
-
 class App
 {
     public static ?App $singleton = null;
@@ -23,8 +22,17 @@ class App
         return static::$singleton;
     }
 
-    public function run()
+    private function loadRoutes(): void
     {
+        $routesFiles = glob(ROUTES_PATH . "*.php");
+        foreach ((array) $routesFiles as $routeFile) {
+            require_once $routeFile;
+        }
+    }
+
+    public function run(): void
+    {
+        $this->loadRoutes();
         try {
             echo Route::resolve();
         } catch (\Exception $e) {
