@@ -48,13 +48,14 @@ class Route
             //make current action from current controller accessed by middleware
             App::$singleton->controller = new $action[0];
             App::$singleton->controller->action = $action[1];
+            $action[0] = App::$singleton->controller;
             //run middleware before execute the action
             foreach (App::$singleton->controller->getMiddleWare() as $middleWare) {
                 $middleWare->execute();
             }
             if (!empty($params))
-                return call_user_func([new $action[0], $action[1]], $params);
-            return call_user_func([new $action[0], $action[1]]);
+                return call_user_func([$action[0], $action[1]], $params);
+            return call_user_func([$action[0], $action[1]]);
         }
         return call_user_func($action);
     }
