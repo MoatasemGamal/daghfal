@@ -12,7 +12,7 @@ class PreventGuestMiddleware extends BaseMiddleware
     {
         if (App::isGuest()) {
             if (in_array(App::$singleton->controller->action, $this->actions)) {
-                throw new \Exception("You Should Logged in!", 404);
+                throw new \Exception("You Should Logged in!", 403);
             }
         }
     }

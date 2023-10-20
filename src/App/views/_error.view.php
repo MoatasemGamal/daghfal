@@ -2,6 +2,8 @@
 /**
  * @var Exception $error
  */
+if ($error->getCode())
+    http_response_code($error->getCode());
 ?>
 <!DOCTYPE html>
 <html lang="en">
