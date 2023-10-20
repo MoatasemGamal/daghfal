@@ -31,9 +31,9 @@ class View
                 }
                 $result = preg_replace("/@yield\('[^']*'\)/", "", $result);
             }
-        }
+        } else
+            $result = $this->view;
         return $result;
-
     }
 
 
