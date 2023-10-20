@@ -1,4 +1,5 @@
 <?php
+use Core\Utility\View;
 
 if (!function_exists("pre")) {
     /**
@@ -19,15 +20,9 @@ if (!function_exists("pre")) {
 }
 
 if (!function_exists("view")) {
-    function view(string $path, $params = []): string
+    function view(string $path, $data = []): string
     {
-        $path = VIEWS_PATH . str_replace(".", "/", $path) . ".view.php";
-        if (!file_exists($path))
-            return throw new \Exception("view not fount!", 404);
-
-        ob_start();
-        extract($params);
-        include $path;
-        return ob_get_clean();
+        $view = new View($path, $data);
+        return $view->render();
     }
 }
