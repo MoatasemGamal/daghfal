@@ -10,9 +10,12 @@ class App
     public static ?App $singleton = null;
     private array $configurations;
     public BaseController $controller;
+    public ?Database $db;
     private function __construct($configurations)
     {
         $this->configurations = $configurations;
+        if (isset($configurations["database"]))
+            $this->db = Database::init($configurations["database"]);
     }
     /**
      * Initialization singleton of App

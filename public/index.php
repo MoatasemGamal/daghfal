@@ -8,7 +8,15 @@ require_once(SRC_PATH . "vendor/autoload.php");
 require_once(CORE_PATH . "helpers.php");
 
 
-$configurations = [];
+$configurations = [
+    "database" => [
+        "dsn" => DSN,
+        "username" => DB_USERNAME,
+        "password" => DB_PASSWORD,
+        "pdo_options" => PDO_OPTIONS
+    ]
+];
+
 App::init($configurations);
 
 App::$singleton->run();
