@@ -1,4 +1,7 @@
 <?php
+use Core\App;
+use Core\Database;
+use Core\Utility\Session;
 use Core\Utility\View;
 
 if (!function_exists("pre")) {
@@ -25,4 +28,23 @@ if (!function_exists("view")) {
         $view = new View($path, $data);
         return $view->render();
     }
+}
+
+if (!function_exists("app")) {
+
+    /**
+     * get App::$singleton or any of its attributes like App::$singleton->db
+     * @param string $attr
+     * @return mixed
+     */
+    function app(string $attr = 'self'): mixed
+    {
+        if ($attr === 'self')
+            return App::$singleton;
+        elseif (isset(App::$singleton->$attr))
+            return App::$singleton->$attr;
+        else
+            return null;
+    }
+
 }
