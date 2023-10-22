@@ -16,6 +16,12 @@ $configurations = [
         "username" => DB_USERNAME,
         "password" => DB_PASSWORD,
         "pdo_options" => PDO_OPTIONS
+    ],
+    "encryption" => [
+        "cipher_algo" => CIPHER_ALGO,
+        "key" => CIPHER_KEY,
+        "vi" => CIPHER_VI,
+        "options" => 0
     ]
 ];
 

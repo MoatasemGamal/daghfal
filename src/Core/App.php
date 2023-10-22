@@ -4,6 +4,7 @@ namespace Core;
 
 use Core\Bases\BaseController;
 use Core\Utility\Session;
+use Core\Utility\Encryption;
 
 class App
 {
@@ -11,11 +12,24 @@ class App
     private array $configurations;
     public BaseController $controller;
     public ?Database $db;
+    public Encryption $encryption;
     private function __construct($configurations)
     {
         $this->configurations = $configurations;
         if (isset($configurations["database"]))
             $this->db = Database::init($configurations["database"]);
+
+        if (
+            isset($configurations["encryption"])
+            && isset($configurations["encryption"]["key"])
+            && isset($configurations["encryption"]["iv"])
+        )
+            $this->encryption = Encryption::init(
+                $configurations["encryption"]["cipher_algo"],
+                $configurations["encryption"]["key"],
+                $configurations["encryption"]["iv"],
+                $configurations["encryption"]["options"]
+            );
     }
     /**
      * Initialization singleton of App
