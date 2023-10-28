@@ -51,5 +51,3 @@ class Encryption
         return $this->cipherAlgo;
     }
 }
-
-print_r(openssl_get_cipher_methods());
