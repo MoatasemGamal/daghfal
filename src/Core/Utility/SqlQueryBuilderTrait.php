@@ -19,22 +19,38 @@ trait SqlQueryBuilderTrait
     }
     public function from(string $table, string $alias = ""): self
     {
-        $table = $this->setTable($table, $alias);
+        $table = $this->prepareTable($table, $alias);
         $this->statement .= "FROM $table ";
         return $this;
     }
 
-    public function insertInto(string $table, string $alias = ""): self
+    public function insert(string $table, string $alias = ""): self
     {
-        $table = $this->setTable($table, $alias);
+        $table = $this->prepareTable($table, $alias);
         $this->statement = "INSERT INTO $table ";
         return $this;
     }
-
-
+    public function update(string $table, string $alias = ""): self
+    {
+        $table = $this->prepareTable($table, $alias);
+        $this->statement = "UPDATE $table ";
+        return $this;
+    }
+    public function data(array $data)
+    {
+        $this->addBindings($data);
+        $this->statement .= "SET " . $this->fullyImplode($data, "=", ",") . " ";
+        return $this;
+    }
+    public function delete(string $table, string $alias = ""): self
+    {
+        $table = $this->prepareTable($table, $alias);
+        $this->statement = "DELETE FROM $table ";
+        return $this;
+    }
     public function leftJoin(string $table, string $alias = ""): self
     {
-        $table = $this->setTable($table, $alias);
+        $table = $this->prepareTable($table, $alias);
         $this->statement .= "LEFT JOIN $table ";
         return $this;
     }
@@ -90,28 +106,21 @@ trait SqlQueryBuilderTrait
         $this->statement .= "OFFSET $offset ";
         return $this;
     }
-
-
-
-
-
-
-
-
-
-    private function logical($logical, array $cols, $operator = "=", $boolean = "and")
+    //==================================
+    //private functions section
+    //==================================
+    private function logical($logical, array $cols, $operator = "=", $boolean = "and"): self
     {
         $columns = $this->fullyImplode($cols, $operator, $boolean);
         $this->statement .= "$logical $columns ";
         $this->addBindings($cols);
         return $this;
     }
-    private function addBindings(array $bindings)
+    private function addBindings(array $bindings): void
     {
-        $bindings = $this->prepareBindings($bindings);
-        $this->bindings = array_merge($this->bindings, $bindings);
+        $this->bindings = array_merge($this->bindings, array_values($bindings));
     }
-    private function setTable($table, $alias = "")
+    private function prepareTable($table, $alias = ""): string
     {
         return ("`$table`" . $alias);
     }
@@ -123,40 +132,21 @@ trait SqlQueryBuilderTrait
         $columns = array_map(fn($column) => $this->prepareCol($column), $columns);
         return $columns;
     }
-    private function prepareBindings(array $columns)
-    {
-        $bindings = [];
-        if (array_is_list($columns))
-            return $columns;
-        foreach ($columns as $key => $value) {
-            $key = explode(".", $key);
-            $key = end($key);
-            $key = ":$key";
-            $bindings[$key] = $value;
-        }
-        return $bindings;
-    }
-    private function fullyImplode(array $columns, $operator, $boolean)
+    private function fullyImplode(array $columns, $operator, $booleanOrSeparator): string
     {
         $operator = strtoupper($operator);
-        $boolean = strtoupper($boolean);
+        $boolean = strtoupper($booleanOrSeparator);
 
         $keys = $this->prepareColumns($columns);
 
-        $values = array_map(function ($col) {
-            $col = explode(".", $col);
-            $col = end($col);
-            return ":$col";
-        }, array_keys($columns));
-
         $columns = [];
-        foreach (array_combine($keys, $values) as $key => $value) {
-            $columns[] = "$key $operator $value";
+        foreach ($keys as $key) {
+            $columns[] = "$key $operator ?";
         }
         return implode(" $boolean ", $columns);
     }
 
-    private function prepareCol($col)
+    private function prepareCol($col): string
     {
         $col = explode('.', $col);
         $col[count($col) - 1] = trim(end($col), "`");

@@ -26,20 +26,19 @@ class Database
         return self::$singleton;
     }
 
-    public function run($query = "CURRENT_QUERY", $bindings = null): \PDOStatement
+    public function run($query = "CURRENT_QUERY", $bindings = null)
     {
         if ($query == "CURRENT_QUERY") {
             $query = $this->statement;
             $bindings = $this->bindings;
-        } elseif (is_array($bindings) && !empty($bindings))
-            $bindings = $this->prepareBindings($bindings);
+        }
         $stmt = $this->pdo->prepare($query);
         foreach ((array) $bindings as $key => $value) {
             $key = is_int($key) ? $key + 1 : $key;
             if (is_array($value))
-                $stmt->bindParam($key, $value[0], $value[1]);
+                $stmt->bindValue($key, $value[0], $value[1]);
             else
-                $stmt->bindParam($key, $value);
+                $stmt->bindValue($key, $value);
         }
         $stmt->execute();
         return $stmt;
