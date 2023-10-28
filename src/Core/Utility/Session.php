@@ -44,7 +44,6 @@ class Session extends \SessionHandler
     public function start(): self
     {
         if (session_status() === PHP_SESSION_NONE) {
-            pre("SESSION started");
             if (session_start()) {
                 $this->setSessionStartTime();
                 $this->verifyFingerPrint();
