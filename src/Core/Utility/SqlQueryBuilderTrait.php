@@ -4,9 +4,10 @@ namespace Core\Utility;
 
 trait SqlQueryBuilderTrait
 {
-    public string $statement = "";
-    public array $bindings = [];
-
+    private string $statement = "";
+    private array $bindings = [];
+    public static $lastInsertedId = null;
+    public ?bool $passed = null;
     public function select(...$columns): self
     {
         if (!empty($columns)) {
@@ -145,13 +146,18 @@ trait SqlQueryBuilderTrait
         }
         return implode(" $boolean ", $columns);
     }
-
     private function prepareCol($col): string
     {
         $col = explode('.', $col);
         $col[count($col) - 1] = trim(end($col), "`");
         $col[count($col) - 1] = "`" . end($col) . "`";
         return implode('.', $col);
+    }
+    private function reset()
+    {
+        $this->statement = "";
+        $this->bindings = [];
+        $this->passed = null;
     }
 }
 

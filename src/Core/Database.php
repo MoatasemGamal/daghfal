@@ -26,7 +26,7 @@ class Database
         return self::$singleton;
     }
 
-    public function run($query = "CURRENT_QUERY", $bindings = null)
+    public function run($query = "CURRENT_QUERY", $bindings = null): \PDOStatement
     {
         if ($query == "CURRENT_QUERY") {
             $query = $this->statement;
@@ -40,7 +40,10 @@ class Database
             else
                 $stmt->bindValue($key, $value);
         }
-        $stmt->execute();
+        $this->passed = (bool) $stmt->execute();
+        if ($this->passed)
+            $this->lastInsertedId = $this->pdo->lastInsertId();
+        $this->reset();
         return $stmt;
     }
 
