@@ -13,6 +13,7 @@ class App
     public BaseController $controller;
     public ?Database $db;
     public Encryption $encryption;
+    public Session $session;
     private function __construct($configurations)
     {
         $this->configurations = $configurations;
@@ -22,14 +23,16 @@ class App
         if (
             isset($configurations["encryption"])
             && isset($configurations["encryption"]["key"])
-            && isset($configurations["encryption"]["iv"])
+            && isset($configurations["encryption"]["vi"])
         )
             $this->encryption = Encryption::init(
                 $configurations["encryption"]["cipher_algo"],
                 $configurations["encryption"]["key"],
-                $configurations["encryption"]["iv"],
+                $configurations["encryption"]["vi"],
                 $configurations["encryption"]["options"]
             );
+
+        $this->session = new Session();
     }
     /**
      * Initialization singleton of App
@@ -52,7 +55,7 @@ class App
     }
     public static function isGuest(): bool
     {
-        Session::start();
+        app('session')->start();
         return !isset($_SESSION["user"]);
     }
     public function run(): void
