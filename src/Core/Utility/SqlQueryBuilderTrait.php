@@ -18,6 +18,19 @@ trait SqlQueryBuilderTrait
             $this->statement = "SELECT * ";
         return $this;
     }
+    public function subQuery(string $sql, string $alias = "")
+    {
+        if ($sql[0] === '(' && $sql[strlen($sql) - 1] === ')') {
+            $sql = rtrim($sql, ")");
+            $sql = ltrim($sql, "(");
+        }
+
+        if (str_contains(strtolower($sql), "limit"))
+            $this->statement .= "( $sql ) $alias ";
+        else
+            $this->statement .= "( $sql LIMIT 1) $alias ";
+        return $this;
+    }
     public function from(string $table, string $alias = ""): self
     {
         $table = $this->prepareTable($table, $alias);
