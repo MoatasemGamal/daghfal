@@ -116,12 +116,12 @@ class BaseModel
             if (isset($this->$attr))
                 $data[$attr] = $this->$attr;
         }
-        if (isset(static::$DELETED_AT))
-            $data[static::$DELETED_AT] = $this->{static::$DELETED_AT};
         if (static::$timestamps === true) {
             $data[static::$CREATED_AT] = $this->{static::$CREATED_AT};
             $data[static::$UPDATED_AT] = $this->{static::$UPDATED_AT};
         }
+        if (isset(static::$DELETED_AT))
+            $data[static::$DELETED_AT] = $this->{static::$DELETED_AT};
         return $data;
     }
 }
