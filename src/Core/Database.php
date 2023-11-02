@@ -42,7 +42,7 @@ class Database
         }
         $this->passed = (bool) $stmt->execute();
         if ($this->passed)
-            $this->lastInsertedId = $this->pdo->lastInsertId();
+            self::$lastInsertedId = $this->pdo->lastInsertId();
         $this->reset();
         return $stmt;
     }
