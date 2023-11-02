@@ -10,13 +10,17 @@ trait SqlQueryBuilderTrait
     public ?bool $passed = null;
     public function select(...$columns): self
     {
+        if (isset($columns[0]) && is_array($columns[0]))
+            $columns = array_shift($columns);
         if (empty($columns) || $columns == ['*'])
             $this->statement = "SELECT * ";
-        else {
+        elseif (is_array($columns)) {
             $columns = $this->prepareColumns($columns);
             $columns = implode(', ', $columns);
             $this->statement = "SELECT " . $columns . " ";
-        }
+        } else
+            $this->statement = "SELECT " . $columns . " ";
+
         return $this;
     }
     public function subQuery(string $sql, string $alias = "")
