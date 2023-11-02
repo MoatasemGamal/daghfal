@@ -11,13 +11,11 @@ if (!function_exists("pre")) {
      * @param bool $print_r
      * @return void
      */
-    function pre(mixed $variable, bool $print_r = false): void
+    function pre(mixed ...$variable): void
     {
         echo "<pre dir='ltr'>";
-        if ($print_r)
-            print_r($variable);
-        else
-            var_dump($variable);
+        foreach ($variable as $v)
+            var_dump($v);
         echo "</pre>";
     }
 }
