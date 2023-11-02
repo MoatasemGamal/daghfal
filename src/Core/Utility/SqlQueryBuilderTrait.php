@@ -125,6 +125,11 @@ trait SqlQueryBuilderTrait
         $this->statement .= "OFFSET $offset ";
         return $this;
     }
+    public function append($sql)
+    {
+        $this->statement .= $sql . " ";
+        return $this;
+    }
     //==================================
     //private functions section
     //==================================
