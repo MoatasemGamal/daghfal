@@ -115,6 +115,7 @@ class BaseModel
         app('db')->insert(static::tableName())
             ->data($this->getData())
             ->run();
+        $this->{static::$primaryKey} = app('db')->lastInsertedId;
     }
 
     private function getData()
