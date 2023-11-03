@@ -57,6 +57,8 @@ class Route
                 return call_user_func([$action[0], $action[1]], $params);
             return call_user_func([$action[0], $action[1]]);
         }
+        if (!empty($params))
+            return call_user_func($action, $params);
         return call_user_func($action);
     }
 
