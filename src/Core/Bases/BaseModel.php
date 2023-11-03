@@ -35,7 +35,7 @@ class BaseModel
     {
         if (isset($columns[0]) && is_array($columns[0]))
             $columns = $columns[0];
-        app('db')->select($columns)->from(static::$table);
+        app('db')->select($columns)->from(static::tableName());
         if (isset(static::$DELETED_AT))
             app('db')->isNull(static::$DELETED_AT);
         $objs = app('db')->run()->fetchAll(\PDO::FETCH_CLASS, static::class);
@@ -45,12 +45,12 @@ class BaseModel
     {
         if (isset($columns[0]) && is_array($columns[0]))
             $columns = $columns[0];
-        $objs = app('db')->select($columns)->from(static::$table)->run()->fetchAll(\PDO::FETCH_CLASS, static::class);
+        $objs = app('db')->select($columns)->from(static::tableName())->run()->fetchAll(\PDO::FETCH_CLASS, static::class);
         return $objs;
     }
     public static function oneOrFail(array $whereCols, string $operator = "=", string $boolean = "and")
     {
-        app('db')->select()->from(static::$table)
+        app('db')->select()->from(static::tableName())
             ->where($whereCols, $operator, $boolean);
         if (isset(static::$DELETED_AT))
             app('db')->isNull(static::$DELETED_AT);
@@ -62,7 +62,7 @@ class BaseModel
     }
     public static function oneOrFailWithTrashed(array $whereCols, string $operator = "=", string $boolean = "and")
     {
-        $obj = app('db')->select()->from(static::$table)
+        $obj = app('db')->select()->from(static::tableName())
             ->where($whereCols, $operator, $boolean)
             ->run()->fetchObject(static::class);
         if ($obj)
@@ -82,7 +82,7 @@ class BaseModel
 
     public function forceDelete(): void
     {
-        app('db')->delete(static::$table)->where(["`" . static::$primaryKey . "`" => $this->{static::$primaryKey}])->run();
+        app('db')->delete(static::tableName())->where(["`" . static::$primaryKey . "`" => $this->{static::$primaryKey}])->run();
     }
 
     public function save()
@@ -99,7 +99,7 @@ class BaseModel
         if (static::$timestamps === true) {
             $this->{static::$UPDATED_AT} = date("Y-m-d H:i:s", time());
         }
-        app('db')->update(static::$table)
+        app('db')->update(static::tableName())
             ->data($this->getData())
             ->where([static::$primaryKey => $this->{static::$primaryKey}])
             ->run();
@@ -112,7 +112,7 @@ class BaseModel
             $this->{static::$CREATED_AT} = $d;
             $this->{static::$UPDATED_AT} = $d;
         }
-        app('db')->insert(static::$table)
+        app('db')->insert(static::tableName())
             ->data($this->getData())
             ->run();
     }
