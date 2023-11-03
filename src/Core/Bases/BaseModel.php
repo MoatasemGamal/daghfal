@@ -92,6 +92,7 @@ class BaseModel
         } else {
             $this->insert();
         }
+        return $this;
     }
 
     private function update()
@@ -115,7 +116,7 @@ class BaseModel
         app('db')->insert(static::tableName())
             ->data($this->getData())
             ->run();
-        $this->{static::$primaryKey} = app('db')->lastInsertedId;
+        $this->{static::$primaryKey} = app('db')::$lastInsertedId;
     }
 
     private function getData()
