@@ -91,6 +91,7 @@ class BaseModel
     //get specific one or more
     public static function where(array $cols = [], string $operator = "=", string $boolean = "and"): Database
     {
+        app('db')->fetchClass = static::class;
         if (empty(app('db')->statement))
             app('db')->select()->from(static::tableName());
         return app('db')->where($cols, $operator, $boolean);

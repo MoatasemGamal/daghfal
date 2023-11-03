@@ -8,6 +8,7 @@ class Database
 {
     public static ?Database $singleton = null;
     public ?\PDO $pdo = null;
+    public string $fetchClass = "";
     use SqlQueryBuilderTrait;
     private function __construct(array $config)
     {
@@ -46,5 +47,17 @@ class Database
         $this->reset();
         return $stmt;
     }
+    /**
+     * direct run() and fetchAll()
+     * if using database class from model object, it will return BaseModel objs
+     */
+    public function fetchObjs()
+    {
+        if (empty($this->fetchClass))
+            return $this->run()->fetchAll(\PDO::FETCH_CLASS);
 
+        $result = $this->run()->fetchAll(\PDO::FETCH_CLASS, $this->fetchClass);
+        $this->fetchClass = "";
+        return $result;
+    }
 }
