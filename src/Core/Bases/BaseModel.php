@@ -132,7 +132,16 @@ class BaseModel
             $data[static::$DELETED_AT] = $this->{static::$DELETED_AT};
         return $data;
     }
-
+    public static function tableName()
+    {
+        if (!isset(static::$table) || is_null(static::$table)) {
+            $table = explode('\\', static::class);
+            $table = end($table);
+            $table = strtolower($table);
+            return $table[strlen($table) - 1] === 's' ? $table : $table . "s";
+        }
+        return static::$table;
+    }
     public function __get($name)
     {
         $property = $name;
