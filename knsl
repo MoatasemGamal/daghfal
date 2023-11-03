@@ -1,0 +1,49 @@
+<?php
+$commands = [
+    "list",
+    "create:migration"
+];
+if (isset($argv[1])) {
+    echo <<<HELLO
+    =========================
+    Hello to the daghfal KNSL
+    =========================
+
+
+    HELLO;
+    switch ($argv[1]) {
+        case "list":
+            var_dump($commands);
+            break;
+        case "create:migration":
+            if (isset($argv[2])) {
+                $table = explode('_', $argv[2])[1];
+                $fileName = "m_" . time() . "_" . $argv[2];
+                $filePath = "./src/Database/Migrations/" . $fileName . ".php";
+                $migrationContent = <<<MIGRATION
+                <?php
+
+                namespace Database\\Migrations;
+
+                class $fileName
+                {
+                    public function up()
+                    {
+
+                    }
+                    public function down(){
+                    app('db')->run("DROP TABLE `$table`");
+                    }
+                }
+                MIGRATION;
+                file_put_contents($filePath, $migrationContent);
+                echo "\nmigration has been created successfully\n";
+            } else
+                echo "no migration name found!";
+            break;
+        default:
+            echo "sorry, command not found!";
+    }
+    echo PHP_EOL;
+} else
+    echo "no command!";
