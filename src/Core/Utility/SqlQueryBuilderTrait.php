@@ -79,7 +79,7 @@ trait SqlQueryBuilderTrait
         return $this;
     }
 
-    public function where(array $cols, string $operator = "=", string $boolean = "and"): self
+    public function where(array $cols = [], string $operator = "=", string $boolean = "and"): self
     {
 
         $columns = $this->fullyImplode($cols, $operator, $boolean);
@@ -128,6 +128,15 @@ trait SqlQueryBuilderTrait
     public function append($sql)
     {
         $this->statement .= $sql . " ";
+        return $this;
+    }
+    public function isNull($column)
+    {
+        $column = $this->prepareCol($column);
+        if (str_contains($this->statement, "WHERE"))
+            $this->statement .= "AND $column IS NULL ";
+        else
+            $this->statement .= "WHERE $column IS NULL ";
         return $this;
     }
     //==================================
