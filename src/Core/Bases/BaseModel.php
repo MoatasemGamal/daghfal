@@ -132,4 +132,25 @@ class BaseModel
             $data[static::$DELETED_AT] = $this->{static::$DELETED_AT};
         return $data;
     }
+
+    public function __get($name)
+    {
+        $property = $name;
+        $name = explode('_', $name);
+        foreach ($name as &$n) {
+            $n = ucfirst($n);
+        }
+        $name = implode('', $name);
+        $getMethod = "get" . $name . "Attribute";
+        if (isset($this->{$property}) && method_exists(static::class, $getMethod)) {
+            $method = new \ReflectionMethod(static::class, $getMethod);
+            if ($method->getNumberOfParameters() > 0)
+                return $this->$getMethod($this->$property);
+            else
+                return $this->$getMethod();
+        } elseif (isset($this->{$property}))
+            return $this->{$property};
+        else
+            return null;
+    }
 }
