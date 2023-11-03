@@ -33,7 +33,7 @@ if (!function_exists("app")) {
     /**
      * get App::$singleton or any of its attributes like App::$singleton->db
      * @param string $attr
-     * @return mixed
+     * @return Database|Session
      */
     function app(string $attr = 'self'): mixed
     {
