@@ -22,20 +22,23 @@ class BaseModel
         }
         return $model;
     }
-    public function edit(array $attributes = []): void
+    public function edit(array $attributes = []): BaseModel
     {
         foreach ($attributes as $key => $value) {
             if (isset($this->$key))
                 $this->$key = $value;
         }
+        return $this;
     }
 
     public static function all(...$columns)
     {
         if (isset($columns[0]) && is_array($columns[0]))
             $columns = $columns[0];
-        $where = isset(static::$DELETED_AT) ? "`" . static::$DELETED_AT . "` IS NULL" : "";
-        $objs = app('db')->select($columns)->from(static::$table)->where($where)->run()->fetchAll(\PDO::FETCH_CLASS, static::class);
+        app('db')->select($columns)->from(static::$table);
+        if (isset(static::$DELETED_AT))
+            app('db')->isNull(static::$DELETED_AT);
+        $objs = app('db')->run()->fetchAll(\PDO::FETCH_CLASS, static::class);
         return $objs;
     }
     public static function allWithTrashed(...$columns)
@@ -45,18 +48,23 @@ class BaseModel
         $objs = app('db')->select($columns)->from(static::$table)->run()->fetchAll(\PDO::FETCH_CLASS, static::class);
         return $objs;
     }
-    public static function oneOrFail()
+    public static function oneOrFail(array $whereCols, string $operator = "=", string $boolean = "and")
     {
-        $where = isset(static::$DELETED_AT) ? "`" . static::$DELETED_AT . "` IS NULL" : "";
-        $obj = app('db')->select()->from(static::$table)->where($where)->run()->fetchObject(static::class);
+        app('db')->select()->from(static::$table)
+            ->where($whereCols, $operator, $boolean);
+        if (isset(static::$DELETED_AT))
+            app('db')->isNull(static::$DELETED_AT);
+        $obj = app('db')->run()->fetchObject(static::class);
         if ($obj)
             return $obj;
         else
             throw new \Exception('Not found', 404);
     }
-    public static function oneOrFailWithTrashed()
+    public static function oneOrFailWithTrashed(array $whereCols, string $operator = "=", string $boolean = "and")
     {
-        $obj = app('db')->select()->from(static::$table)->where()->run()->fetchObject(static::class);
+        $obj = app('db')->select()->from(static::$table)
+            ->where($whereCols, $operator, $boolean)
+            ->run()->fetchObject(static::class);
         if ($obj)
             return $obj;
         else
