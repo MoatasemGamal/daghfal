@@ -70,6 +70,22 @@ class BaseModel
         else
             throw new \Exception('Not found', 404);
     }
+    public static function one(array $whereCols, string $operator = "=", string $boolean = "and")
+    {
+        app('db')->select()->from(static::tableName())
+            ->where($whereCols, $operator, $boolean);
+        if (isset(static::$DELETED_AT))
+            app('db')->isNull(static::$DELETED_AT);
+        $obj = app('db')->run()->fetchObject(static::class);
+        return $obj;
+    }
+    public static function oneWithTrashed(array $whereCols, string $operator = "=", string $boolean = "and")
+    {
+        $obj = app('db')->select()->from(static::tableName())
+            ->where($whereCols, $operator, $boolean)
+            ->run()->fetchObject(static::class);
+        return $obj;
+    }
     public function delete()
     {
         if (isset(static::$DELETED_AT)) {
