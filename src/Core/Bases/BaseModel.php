@@ -2,6 +2,8 @@
 
 namespace Core\Bases;
 
+use Core\Database;
+
 /**
  * @property bool $timestamps
  * @property string $UPDATED_AT
@@ -86,6 +88,14 @@ class BaseModel
             ->run()->fetchObject(static::class);
         return $obj;
     }
+    //get specific one or more
+    public static function where(array $cols = [], string $operator = "=", string $boolean = "and"): Database
+    {
+        if (empty(app('db')->statement))
+            app('db')->select()->from(static::tableName());
+        return app('db')->where($cols, $operator, $boolean);
+    }
+
     public function delete()
     {
         if (isset(static::$DELETED_AT)) {
