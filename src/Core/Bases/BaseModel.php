@@ -14,7 +14,7 @@ class BaseModel
     protected static array $attributes;
     protected static string $primaryKey = 'id';
 
-    public static function factory(array $attributes = []): BaseModel
+    public static function create(array $attributes = []): BaseModel
     {
         $model = new static();
         foreach ($attributes as $key => $value) {
