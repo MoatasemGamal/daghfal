@@ -108,7 +108,7 @@ class BaseModel
 
     private function insert()
     {
-        if (static::$timestamps === true) {
+        if (isset(static::$timestamps) && static::$timestamps === true) {
             $d = date("Y-m-d H:i:s", time());
             $this->{static::$CREATED_AT} = $d;
             $this->{static::$UPDATED_AT} = $d;
@@ -126,7 +126,7 @@ class BaseModel
             if (isset($this->$attr))
                 $data[$attr] = $this->$attr;
         }
-        if (static::$timestamps === true) {
+        if (isset(static::$timestamps) && static::$timestamps === true) {
             $data[static::$CREATED_AT] = $this->{static::$CREATED_AT};
             $data[static::$UPDATED_AT] = $this->{static::$UPDATED_AT};
         }
