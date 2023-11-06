@@ -178,7 +178,7 @@ class BaseModel
     public function hasOne(string $otherClass, $foreignKey = null, $primaryKey = null, bool $withTrashed = false)
     {
         if ($foreignKey == null)
-            $foreignKey = $otherClass::$primaryKey;
+            $foreignKey = rtrim($this->tableName(), 's') . "_" . static::class::$primaryKey;
         if ($primaryKey == null)
             $primaryKey = static::class::$primaryKey;
         $pkValue = $this->{$primaryKey};
@@ -190,14 +190,14 @@ class BaseModel
     public function hasMany(string $otherClass, $foreignKey = null, $primaryKey = null, bool $withTrashed = false)
     {
         if ($foreignKey == null)
-            $foreignKey = $otherClass::$primaryKey;
+            $foreignKey = rtrim($this->tableName(), 's') . "_" . static::class::$primaryKey;
         if ($primaryKey == null)
             $primaryKey = static::class::$primaryKey;
         $pkValue = $this->{$primaryKey};
         if ($withTrashed)
-            return $otherClass::allWithTrashed([$foreignKey => $pkValue]);
+            return $otherClass::where([$foreignKey => $pkValue])->fetchObjs();
         else
-            return $otherClass::all([$foreignKey => $pkValue]);
+            return $otherClass::where([$foreignKey => $pkValue])->isNull("deleted_at")->fetchObjs();
     }
 
 
@@ -224,12 +224,12 @@ class BaseModel
     public function __set($name, $value)
     {
         $property = $name;
-        $name = explode('_', $name);
-        foreach ($name as &$n) {
-            $n = ucfirst($n);
+        $property = explode('_', $name);
+        foreach ($property as &$p) {
+            $p = ucfirst($p);
         }
-        $name = implode('', $name);
-        $setMethod = "set" . $name . "Attribute";
+        $property = implode('', $property);
+        $setMethod = "set" . $property . "Attribute";
         if (method_exists(static::class, $setMethod))
             $this->$setMethod($value);
         else
