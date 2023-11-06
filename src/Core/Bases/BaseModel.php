@@ -175,29 +175,29 @@ class BaseModel
     // ============ Relations ============
     // ===================================
     // - one to one relationship
-    public function hasOne(string $otherClass, $forigenKey = null, $primaryKey = null, bool $withTrashed = false)
+    public function hasOne(string $otherClass, $foreignKey = null, $primaryKey = null, bool $withTrashed = false)
     {
-        if ($forigenKey == null)
-            $forigenKey = $otherClass::$primaryKey;
+        if ($foreignKey == null)
+            $foreignKey = $otherClass::$primaryKey;
         if ($primaryKey == null)
             $primaryKey = static::class::$primaryKey;
         $pkValue = $this->{$primaryKey};
         if ($withTrashed)
-            return $otherClass::oneWithTrashed([$forigenKey => $pkValue]);
+            return $otherClass::oneWithTrashed([$foreignKey => $pkValue]);
         else
-            return $otherClass::one([$forigenKey => $pkValue]);
+            return $otherClass::one([$foreignKey => $pkValue]);
     }
-    public function hasMany(string $otherClass, $forigenKey = null, $primaryKey = null, bool $withTrashed = false)
+    public function hasMany(string $otherClass, $foreignKey = null, $primaryKey = null, bool $withTrashed = false)
     {
-        if ($forigenKey == null)
-            $forigenKey = $otherClass::$primaryKey;
+        if ($foreignKey == null)
+            $foreignKey = $otherClass::$primaryKey;
         if ($primaryKey == null)
             $primaryKey = static::class::$primaryKey;
         $pkValue = $this->{$primaryKey};
         if ($withTrashed)
-            return $otherClass::allWithTrashed([$forigenKey => $pkValue]);
+            return $otherClass::allWithTrashed([$foreignKey => $pkValue]);
         else
-            return $otherClass::all([$forigenKey => $pkValue]);
+            return $otherClass::all([$foreignKey => $pkValue]);
     }
 
 
