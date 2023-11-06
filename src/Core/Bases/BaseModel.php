@@ -171,6 +171,24 @@ class BaseModel
         }
         return static::$table;
     }
+    // ===================================
+    // ============ Relations ============
+    // ===================================
+    // - one to one relationship
+    public function hasOne(string $otherClass, $forigenKey = null, $primaryKey = null, bool $withTrashed = false)
+    {
+        if ($forigenKey == null)
+            $forigenKey = $otherClass::$primaryKey;
+        if ($primaryKey == null)
+            $primaryKey = static::class::$primaryKey;
+        $pkValue = $this->{$primaryKey};
+        if ($withTrashed)
+            return $otherClass::oneWithTrashed([$forigenKey => $pkValue]);
+        else
+            return $otherClass::one([$forigenKey => $pkValue]);
+    }
+
+
     public function __get($name)
     {
         $property = $name;
