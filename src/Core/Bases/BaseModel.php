@@ -191,4 +191,18 @@ class BaseModel
         else
             return null;
     }
+    public function __set($name, $value)
+    {
+        $property = $name;
+        $name = explode('_', $name);
+        foreach ($name as &$n) {
+            $n = ucfirst($n);
+        }
+        $name = implode('', $name);
+        $setMethod = "set" . $name . "Attribute";
+        if (method_exists(static::class, $setMethod))
+            $this->$setMethod($value);
+        else
+            $this->$name = $value;
+    }
 }
