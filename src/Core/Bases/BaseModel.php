@@ -201,6 +201,18 @@ class BaseModel
     }
 
 
+    public function attach(BaseModel &$object, string $foreignKey = null, string $primaryKey = null)
+    {
+        if ($foreignKey == null)
+            $foreignKey = rtrim($this->tableName(), 's') . "_" . static::$primaryKey;
+        if ($primaryKey == null)
+            $primaryKey = static::class::$primaryKey;
+        $pkValue = $this->{$primaryKey};
+        $object->$foreignKey = $pkValue;
+        pre($object);
+        $object->save();
+    }
+
     public function __get($name)
     {
         $property = $name;
