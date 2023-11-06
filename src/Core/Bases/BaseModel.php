@@ -187,6 +187,18 @@ class BaseModel
         else
             return $otherClass::one([$forigenKey => $pkValue]);
     }
+    public function hasMany(string $otherClass, $forigenKey = null, $primaryKey = null, bool $withTrashed = false)
+    {
+        if ($forigenKey == null)
+            $forigenKey = $otherClass::$primaryKey;
+        if ($primaryKey == null)
+            $primaryKey = static::class::$primaryKey;
+        $pkValue = $this->{$primaryKey};
+        if ($withTrashed)
+            return $otherClass::allWithTrashed([$forigenKey => $pkValue]);
+        else
+            return $otherClass::all([$forigenKey => $pkValue]);
+    }
 
 
     public function __get($name)
