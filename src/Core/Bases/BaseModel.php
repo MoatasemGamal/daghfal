@@ -199,6 +199,18 @@ class BaseModel
         else
             return $otherClass::where([$foreignKey => $pkValue])->isNull("deleted_at")->fetchObjs();
     }
+    public function belongsTo(string $mainClass, $primaryKey = null, $foreignKey = null, bool $withTrashed = false)
+    {
+        if ($primaryKey == null)
+            $primaryKey = $mainClass::$primaryKey;
+        if ($foreignKey == null)
+            $foreignKey = rtrim($mainClass::tableName(), 's') . "_" . $mainClass::$primaryKey;
+        $fkValue = $this->{$foreignKey};
+        if ($withTrashed)
+            return $mainClass::oneWithTrashed([$primaryKey => $fkValue]);
+        else
+            return $mainClass::one([$primaryKey => $fkValue]);
+    }
     public function manyToMany(string $otherClass, string $pivotTable = null, string $pivotColumnForCurrentClass = null, string $pivotColumnForOtherClass = null)
     {
         $table = [static::tableName(), $otherClass::tableName()];
