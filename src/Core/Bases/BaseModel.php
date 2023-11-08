@@ -199,7 +199,28 @@ class BaseModel
         else
             return $otherClass::where([$foreignKey => $pkValue])->isNull("deleted_at")->fetchObjs();
     }
-
+    public function manyToMany(string $otherClass, string $pivotTable = null, string $pivotColumnForCurrentClass = null, string $pivotColumnForOtherClass = null)
+    {
+        $table = [static::tableName(), $otherClass::tableName()];
+        if (is_null($pivotTable)) {
+            $pivotTable = rtrim($table[0], 's') . "_" . rtrim($table[1], 's');
+            if (!app('db')->run("SHOW TABLES LIKE '$pivotTable'")->fetch()) {
+                $pivotTable = rtrim($table[1], 's') . "_" . rtrim($table[0], 's');
+            }
+        }
+        $pivotColumnForCurrentClass = is_null($pivotColumnForCurrentClass) ? rtrim($table[0], 's') . "_" . static::$primaryKey : $pivotColumnForCurrentClass;
+        $pivotColumnForOtherClass = is_null($pivotColumnForOtherClass) ? rtrim($table[1], 's') . "_" . $otherClass::$primaryKey : $pivotColumnForOtherClass;
+        $pivotValues = app('db')->select()->from($pivotTable)
+            ->where([$pivotColumnForCurrentClass => $this->{static::$primaryKey}])
+            ->run()->fetchAll(\PDO::FETCH_ASSOC);
+        $result = [];
+        foreach ((array) $pivotValues as $row) {
+            if (key_exists($pivotColumnForOtherClass, $row))
+                if ($otherClass::one([$otherClass::$primaryKey => $row[$pivotColumnForOtherClass]]) instanceof $otherClass)
+                    $result[] = $otherClass::one([$otherClass::$primaryKey => $row[$pivotColumnForOtherClass]]);
+        }
+        return $result;
+    }
 
     public function attach(BaseModel &$object, string $foreignKey = null, string $primaryKey = null)
     {
@@ -209,7 +230,6 @@ class BaseModel
             $primaryKey = static::class::$primaryKey;
         $pkValue = $this->{$primaryKey};
         $object->$foreignKey = $pkValue;
-        pre($object);
         $object->save();
     }
 
