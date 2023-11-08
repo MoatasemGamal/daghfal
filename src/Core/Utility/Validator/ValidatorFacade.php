@@ -44,9 +44,14 @@ class ValidatorFacade
         }
         return $this;
     }
-    public function required(Item $item, Rule $rule)
+    private function required(Item $item, Rule $rule)
     {
         if (empty($item->value()))
+            $this->errors[] = $rule->message;
+    }
+    private function minMax(Item $item, Rule $rule)
+    {
+        if (strlen($item->value()) < $rule->params['min'] || strlen($item->value()) > $rule->params['max'])
             $this->errors[] = $rule->message;
     }
 }

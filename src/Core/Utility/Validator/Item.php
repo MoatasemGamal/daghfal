@@ -48,6 +48,11 @@ class Item
         $this->appendRule(name: "required", message: $message);
         return $this;
     }
+    public function minMax(int $min, int $max, string $message = null): self
+    {
+        $this->appendRule(name: "minMax", params: compact("min", "max"), message: $message);
+        return $this;
+    }
     private function appendRule(string $name, array $params = [], ?string $message = "sorry, not valid")
     {
         $message = is_null($message) ? "sorry, not valid" : $message;
