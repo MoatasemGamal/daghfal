@@ -34,4 +34,19 @@ class ValidatorFacade
         $this->items[] = new Item(name: array_key_first($var), value: array_values($var)[0]);
         return end($this->items);
     }
+    public function validate(): self
+    {
+        foreach ($this->items as $item) {
+            foreach ($item->rules as $rule) {
+                if (method_exists($this, $rule->name))
+                    $this->{$rule->name}($item, $rule);
+            }
+        }
+        return $this;
+    }
+    public function required(Item $item, Rule $rule)
+    {
+        if (empty($item->value()))
+            $this->errors[] = $rule->message;
+    }
 }
