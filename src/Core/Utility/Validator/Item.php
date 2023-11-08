@@ -43,7 +43,11 @@ class Item
             default => INPUT_POST
         };
     }
-
+    public function required($message = null): self
+    {
+        $this->appendRule(name: "required", message: $message);
+        return $this;
+    }
     private function appendRule(string $name, array $params = [], ?string $message = "sorry, not valid")
     {
         $message = is_null($message) ? "sorry, not valid" : $message;
