@@ -54,4 +54,9 @@ class ValidatorFacade
         if (strlen($item->value()) < $rule->params['min'] || strlen($item->value()) > $rule->params['max'])
             $this->errors[] = $rule->message;
     }
+    private function match(Item $item, Rule $rule)
+    {
+        if ($item->value() !== $rule->params[0]->value())
+            $this->errors[] = $rule->message;
+    }
 }

@@ -53,6 +53,15 @@ class Item
         $this->appendRule(name: "minMax", params: compact("min", "max"), message: $message);
         return $this;
     }
+    public function match($otherItem, $inputMethod = INPUT_POST, $message = null): self
+    {
+        if (is_array($otherItem))
+            $item = new Item(name: array_key_first($otherItem), value: array_values($otherItem)[0]);
+        else
+            $item = new Item(name: $otherItem, method: $inputMethod);
+        $this->appendRule(name: "match", params: [$item], message: $message);
+        return $this;
+    }
     private function appendRule(string $name, array $params = [], ?string $message = "sorry, not valid")
     {
         $message = is_null($message) ? "sorry, not valid" : $message;
