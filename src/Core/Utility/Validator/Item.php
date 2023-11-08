@@ -44,6 +44,11 @@ class Item
         };
     }
 
+    private function appendRule(string $name, array $params = [], ?string $message = "sorry, not valid")
+    {
+        $message = is_null($message) ? "sorry, not valid" : $message;
+        $this->rules[] = new Rule($name, $params, $message);
+    }
     public function value(): mixed
     {
         if ($this->isVar)
