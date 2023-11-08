@@ -9,10 +9,10 @@ class Rule
     public string $message;
     public function __construct(string $name, array $params = [], string $message = "sorry, not valid")
     {
-        $availableRules = get_class_methods(ValidatorFacade::class);
+        $reflection = new \ReflectionClass(ValidatorFacade::class);
+        $availableRules = array_map(fn($reflectionMethod) => $reflectionMethod->name, $reflection->getMethods());
         $this->name = in_array($name, $availableRules) ? $name : "required";
         $this->params = $params;
         $this->message = $message;
     }
-
 }
