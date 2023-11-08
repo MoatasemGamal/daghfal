@@ -283,6 +283,15 @@ class BaseModel
             $pivotColumnForOtherClass => $object->{$object::$primaryKey}
         ])->run();
     }
+    public static function paginate($perPage = 12, array $cols = [], string $operator = "=", string $boolean = "and")
+    {
+        $page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT) ?? 1;
+        app('db')->fetchClass = static::class;
+        $objs = static::where($cols, $operator, $boolean)->fetchObjs();
+        $numberOfPages = ceil(count($objs) / $perPage);
+        $objs = array_slice($objs, ($page - 1) * $perPage, $perPage);
+        return ["pages" => $numberOfPages, "current" => $page, "objs" => $objs];
+    }
     public function __get($name)
     {
         $property = $name;
