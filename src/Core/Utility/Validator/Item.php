@@ -19,7 +19,7 @@ class Item
      * value of the variable, if this item is variable not (GET, POST) input
      * @var mixed
      */
-    public mixed $value;
+    private mixed $value;
     /**
      * request method if item is input not variable (INPUT_POST, INPUT_GET)
      * @var int
@@ -41,6 +41,18 @@ class Item
             INPUT_POST => INPUT_POST,
             INPUT_GET => INPUT_GET,
             default => INPUT_POST
+        };
+    }
+
+    public function value(): mixed
+    {
+        if ($this->isVar)
+            return $this->value;
+        $inputName = $this->name;
+        return match ($this->method) {
+            INPUT_GET => $_GET[$inputName],
+            INPUT_POST => $_POST[$inputName],
+            default => null
         };
     }
 }
