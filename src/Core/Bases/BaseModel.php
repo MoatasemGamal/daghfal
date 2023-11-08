@@ -244,7 +244,30 @@ class BaseModel
         $object->$foreignKey = $pkValue;
         $object->save();
     }
-
+    public function unAttachForceDelete(BaseModel &$object, string $foreignKey = null, string $primaryKey = null)
+    {
+        if ($foreignKey == null)
+            $foreignKey = rtrim($this->tableName(), 's') . "_" . static::$primaryKey;
+        if ($primaryKey == null)
+            $primaryKey = static::class::$primaryKey;
+        $object->forceDelete();
+    }
+    public function unAttachPivot(BaseModel $object, string $pivotTable = null, string $pivotColumnForCurrentClass = null, string $pivotColumnForOtherClass = null)
+    {
+        $table = [static::tableName(), $object::tableName()];
+        if (is_null($pivotTable)) {
+            $pivotTable = rtrim($table[0], 's') . "_" . rtrim($table[1], 's');
+            if (!app('db')->run("SHOW TABLES LIKE '$pivotTable'")->fetch()) {
+                $pivotTable = rtrim($table[1], 's') . "_" . rtrim($table[0], 's');
+            }
+        }
+        $pivotColumnForCurrentClass = is_null($pivotColumnForCurrentClass) ? rtrim($table[0], 's') . "_" . static::$primaryKey : $pivotColumnForCurrentClass;
+        $pivotColumnForOtherClass = is_null($pivotColumnForOtherClass) ? rtrim($table[1], 's') . "_" . $object::$primaryKey : $pivotColumnForOtherClass;
+        app('db')->delete($pivotTable)->where([
+            $pivotColumnForCurrentClass => $this->{static::$primaryKey},
+            $pivotColumnForOtherClass => $object->{$object::$primaryKey}
+        ])->run();
+    }
     public function __get($name)
     {
         $property = $name;
