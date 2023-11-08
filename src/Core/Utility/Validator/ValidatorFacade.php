@@ -5,6 +5,10 @@ namespace Core\Utility\Validator;
 class ValidatorFacade
 {
     private $method;
+    /**
+     * Summary of items
+     * @var Item[]
+     */
     private $items = [];
     public $errors = [];
     public function __construct(int $method = INPUT_POST)
@@ -14,5 +18,20 @@ class ValidatorFacade
             INPUT_GET => INPUT_GET,
             default => INPUT_POST
         };
+    }
+    public function input($name, $method = null): Item
+    {
+        $method = is_null($method) ? $this->method : match ($method) {
+            INPUT_POST => INPUT_POST,
+            INPUT_GET => INPUT_GET,
+            default => INPUT_POST
+        };
+        $this->items[] = new Item(name: $name, method: $method);
+        return end($this->items);
+    }
+    public function var (array $var)
+    {
+        $this->items[] = new Item(name: array_key_first($var), value: array_values($var)[0]);
+        return end($this->items);
     }
 }
